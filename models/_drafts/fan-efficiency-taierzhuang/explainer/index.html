@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>风机效率公式口径讲解 · 证据地图册</title>
+<meta name="description" content="Excel《风机效率核算工具》公式口径错误的可视化讲解：压比项对、前导项把进口状态换成了标准状态。">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<div class="topbar">
+  <span class="brand"><b>风机效率核算</b> · 公式口径讲解</span>
+  <div class="topbar-right">
+    <span class="variant-chip">证据地图册</span>
+    <button class="src-toggle" id="srcToggle" type="button" aria-expanded="false" aria-controls="srcPanel">来源指纹</button>
+  </div>
+</div>
+
+<div class="deploy-note">
+  <div class="dn-in">
+    <b>本期部署口径 = Excel 口径（<code>eta_excel</code>）。</b>
+    模型同时算两个口径：部署与对外读数按 Excel 口径，<code>eta_corrected</code>（前导项改用进口真实状态）作为伴随字段并列输出，只用于对账与后续切换。
+    因此本页下面的推导不是"要推翻线上值"，而是说明两个口径差在哪、差多少——现场看到的差值就是这个量级。
+  </div>
+</div>
+
+<div id="app"></div>
+
+<aside class="src-panel" id="srcPanel" aria-hidden="true" aria-label="本页的来源指纹">
+  <button class="src-toggle src-close" id="srcClose" type="button">关闭</button>
+  <div id="srcBody"></div>
+</aside>
+
+<script src="app.js"></script>
+</body>
+</html>

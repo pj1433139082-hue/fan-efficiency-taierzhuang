@@ -1,0 +1,74 @@
+schema_version: '1.0'
+compatibility:
+  model_lab: '>=0.1.0,<1.0.0'
+model:
+  id: fan-efficiency-taierzhuang
+  name: 风机效率实时计算（台儿庄）
+  version: 0.1.0
+  lifecycle_state: releasable
+  owner: heshengjie
+target:
+  kind: cpu-iot
+  environment:
+    operating_system: linux
+    architecture: x86_64
+    python: '>=3.11,<3.12'
+    mlflow: ==2.22.2
+    package_format: mlflow-pyfunc
+    dependency_lock: runtime/requirements.lock.txt
+    native_runtime:
+      kind: none
+contract:
+  inputs:
+  - name: inlet_flow
+    type: number
+    unit: m3/min
+  - name: outlet_pressure
+    type: number
+    unit: kPa
+  - name: motor_power
+    type: number
+    unit: kW
+  - name: inlet_temperature
+    type: number
+    unit: C
+  - name: elevation
+    type: number
+    unit: m
+  outputs:
+  - name: eta_excel
+    type: number
+    unit: '1'
+  - name: eta_corrected
+    type: number
+    unit: '1'
+  - name: wp_excel
+    type: number
+    unit: kW
+  - name: wp_corrected
+    type: number
+    unit: kW
+  - name: quality
+    type: string
+    unit: code
+artifacts:
+- name: model_source
+  kind: python-source
+  uri: file:///E:/beikong-code/learn-model/models/_drafts/fan-efficiency-taierzhuang/src/model.py
+  sha256: a7fb5c93d167176d6b4a927849090c9d02a1eafbd127eeee1586f1d347bc7213
+- name: build_notebook
+  kind: notebook
+  uri: file:///E:/beikong-code/learn-model/models/_drafts/fan-efficiency-taierzhuang/notebooks/model.ipynb
+  sha256: 963678f1645799c989e89d29e3c40bd0f3f44cfc0c6f9ee6fb7ad0428414be4e
+- name: mlflow_service
+  kind: mlflow-pyfunc
+  uri: file:///E:/beikong-code/learn-model/models/_drafts/fan-efficiency-taierzhuang/release-bundle/service
+  sha256: c2466e8c7be3073ec0a10d2e77414db44f64d7621042b39620e258c270ec83bb
+source:
+  entrypoint: src/model.py
+  entrypoint_sha256: 17f0bdc5a697069ea9707ee4fd6258d9216311a8f7dd3b986d64838209a7c533
+  notebook: notebooks/model.ipynb
+  notebook_sha256: a6db29a0c67dfa9453ae34eb0404f22d7cc28fa4e5796fa31cfc1b5e35bfd88f
+  documentation: docs/数据质量对抗性审查.md
+  documentation_sha256: 2e12c4f0d566d587e881a6befbdaa7db1a1c0dcfc2be471b0a7b2093e13ff94a
+  digest_mode: utf8-lf

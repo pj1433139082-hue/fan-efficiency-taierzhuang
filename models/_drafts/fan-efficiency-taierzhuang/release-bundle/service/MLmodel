@@ -1,0 +1,43 @@
+flavors:
+  python_function:
+    artifacts:
+      custom_sources:
+        path: artifacts/custom_sources.pkl
+        uri: artifacts/custom_sources.pkl
+      logic_bundle:
+        path: artifacts/logic_bundle.pkl
+        uri: artifacts/logic_bundle.pkl
+      model_file:
+        path: artifacts/model.py
+        uri: artifacts/model.py
+    cloudpickle_version: 3.1.2
+    code: code
+    env:
+      conda: conda.yaml
+      virtualenv: python_env.yaml
+    loader_module: mlflow.pyfunc.model
+    python_model: python_model.pkl
+    python_version: 3.11.17
+    streamable: false
+is_signature_from_type_hint: false
+mlflow_version: 2.22.2
+model_size_bytes: 28146
+model_uuid: 3885d44975ef460d87e25c9093bfb755
+prompts: null
+saved_input_example_info:
+  artifact_path: input_example.json
+  pandas_orient: split
+  serving_input_path: serving_input_example.json
+  type: dataframe
+signature:
+  inputs: '[{"type": "double", "name": "inlet_flow", "required": true}, {"type": "double",
+    "name": "outlet_pressure", "required": true}, {"type": "double", "name": "motor_power",
+    "required": true}, {"type": "double", "name": "inlet_temperature", "required":
+    true}, {"type": "double", "name": "elevation", "required": true}]'
+  outputs: '[{"type": "double", "name": "eta_excel", "required": true}, {"type": "double",
+    "name": "eta_corrected", "required": true}, {"type": "double", "name": "wp_excel",
+    "required": true}, {"type": "double", "name": "wp_corrected", "required": true},
+    {"type": "string", "name": "quality", "required": true}]'
+  params: null
+type_hint_from_example: false
+utc_time_created: '2026-10-18 15:31:32.907381'

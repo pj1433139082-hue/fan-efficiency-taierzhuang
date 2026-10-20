@@ -1,0 +1,39 @@
+{
+  "decisions": {
+    "open_ids": [],
+    "source_sha256": "cf2991f83584c116ba70b6d3f2654fbfffe592d2bf6cf91b1a70585593f399ab",
+    "status": "recorded",
+    "summary": {
+      "confirmed_count": 11,
+      "open_count": 0,
+      "sha256": "73dfa66835795348457d197494fee123119f95092487dd295a726b89c077af3f",
+      "superseded_count": 1,
+      "valid": true
+    }
+  },
+  "model": {
+    "id": "fan-efficiency-taierzhuang",
+    "lifecycle_state": "releasable",
+    "name": "风机效率实时计算（台儿庄）",
+    "owner": "heshengjie",
+    "target": "cpu-iot",
+    "version": "0.1.0"
+  },
+  "publication": {
+    "evidence": null,
+    "experiment": null,
+    "live_platform_status": "not_queried",
+    "run_id": null,
+    "status": "unknown"
+  },
+  "schema_version": "1.0",
+  "scope": "generated_repository_snapshot_not_live_platform",
+  "serving": {
+    "binding": null,
+    "mode": "numeric",
+    "point_metadata": "not_applicable"
+  },
+  "sources": {
+    "model.yaml": "3a178eccfec57e4b5d8827b97e125ced2ec267a96fbeb99dbc1e1c8659162258"
+  }
+}

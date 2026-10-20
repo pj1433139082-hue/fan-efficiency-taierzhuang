@@ -1,0 +1,11 @@
+__pycache__/
+*.py[cod]
+
+# 集团凭据与运行时加密包，任何 Git 都不入库
+scripts/deploy-kit/**/infra/
+
+# 原始/派生数据与二进制交付附件不入库
+data/**/*.parquet
+data/**/*.docx
+data/**/*.xlsx
+data/**/*.zip
