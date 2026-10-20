@@ -140,6 +140,17 @@ scripts/deploy-kit/fan-efficiency-taierzhuang/   发布套件（A 通道）
 
 - 平台绑定与运维细节见快照内 [docs/发布记录-0.1.0.md](models/_drafts/fan-efficiency-taierzhuang/docs/发布记录-0.1.0.md)。
 
+## 仓库治理
+
+| 面 | 现状 |
+|---|---|
+| CI | [`.github/workflows/checks.yml`](.github/workflows/checks.yml)：模型断言 23 项 + 脱敏自检（内网域名/厂站码命中即失败），`main` 与 PR 都跑 |
+| 分支保护 | `main` 禁强推、禁删除；合并前必须过 `checks`（`strict: false`，不要求分支追平） |
+| 安全 | secret scanning + push protection、Dependabot 告警与自动修复、私有漏洞报告均已开；工作流默认权限只读 |
+| 模板 | [issue 表单](.github/ISSUE_TEMPLATE/bug_report.yml) 与 [PR 模板](.github/pull_request_template.md)，空 issue 关闭 |
+| 许可 / 治理 | [MIT](LICENSE)、[贡献指南](CONTRIBUTING.md)、[安全政策](SECURITY.md)、[行为准则](CODE_OF_CONDUCT.md) |
+| 合并方式 | 只允许 squash，合并后自动删源分支（线性历史） |
+
 ## 已知边界与待确认
 
 - 厂家侧 5 条待确认：C-4 温度探头位置、E-3 喘振最小风量、A-2 样本风量范围、A-3 面板换算参数、D-5 功率来源；回齐后发 `0.1.1`。
