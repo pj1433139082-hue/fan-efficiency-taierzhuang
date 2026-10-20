@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: "📖 使用说明（README）"
+    url: https://github.com/pj1433139082-hue/fan-efficiency-taierzhuang/blob/main/README.md
+    about: 快速开始、五个输入的口径、已知边界都在这里。
+  - name: "🔒 报告安全问题"
+    url: https://github.com/pj1433139082-hue/fan-efficiency-taierzhuang/security/advisories/new
+    about: 疑似泄漏或安全问题请走私密报告，不要开公开 issue。

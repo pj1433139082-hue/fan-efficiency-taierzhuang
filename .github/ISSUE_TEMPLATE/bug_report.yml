@@ -1,0 +1,40 @@
+name: 🐛 问题反馈
+description: 报告可复现的计算结果、加载或文档问题。
+title: "[Bug]: "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        提交前请先看 README 的「已知边界」一节；本仓是脱敏快照，缺少现场数据属预期行为。
+  - type: textarea
+    id: phenomenon
+    attributes:
+      label: 现象
+      description: 发生了什么，和你的预期差在哪。
+      placeholder: 例如：同一组输入，本仓算出 eta_excel=0.7177，平台返回 0.7100。
+    validations:
+      required: true
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: 复现输入
+      description: 五个输入值（inlet_flow / outlet_pressure / motor_power / inlet_temperature / elevation）与调用方式。
+      render: shell
+    validations:
+      required: true
+  - type: input
+    id: environment
+    attributes:
+      label: 运行环境
+      placeholder: "Python 3.11.17 / mlflow 2.22.2 / Windows 11"
+    validations:
+      required: true
+  - type: checkboxes
+    id: self-check
+    attributes:
+      label: 自查
+      options:
+        - label: 已在 models/_drafts/fan-efficiency-taierzhuang 下跑过 python -m unittest discover -s tests
+        - label: 已确认这不是 README「已知边界」里写到的限制
+          required: true
