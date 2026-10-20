@@ -1,5 +1,7 @@
 # 风机效率实时计算（台儿庄）
 
+[![Repository checks](https://github.com/pj1433139082-hue/fan-efficiency-taierzhuang/actions/workflows/checks.yml/badge.svg)](https://github.com/pj1433139082-hue/fan-efficiency-taierzhuang/actions/workflows/checks.yml)
+
 污水处理厂曝气风机的**实时效率（风机效率 η）**计算模型。现场给五个读数（进风流量、出口压力、电机功率、进气温度、海拔）就直接算出风机效率与风压功率——不训练、不依赖历史数据，加载端零第三方依赖。
 
 - 模型 ID：`fan-efficiency-taierzhuang`
