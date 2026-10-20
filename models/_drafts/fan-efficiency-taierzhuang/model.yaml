@@ -6,7 +6,7 @@ model:
   name: 风机效率实时计算（台儿庄）
   version: 0.1.0
   lifecycle_state: releasable
-  owner: heshengjie
+  owner: <owner-id>
 target:
   kind: cpu-iot
   environment:

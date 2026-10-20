@@ -1,6 +1,6 @@
 schema_version: '1.0'
 model_id: fan-efficiency-taierzhuang
-owner: heshengjie
+owner: <owner-id>
 decisions:
 - id: requirements-context
   stage: requirements
@@ -11,7 +11,7 @@ decisions:
   recommendation: 本期只做台儿庄 6 台曝气风机的单机效率实时计算：输入 4 个实时测点（进口风量、出口压力、电机输入功率、进口温度）+ 1 个海拔配置常数，执行周期 1 分钟（对 15 秒采样取均值），输出 Excel 口径与修正口径两个效率。不做最优组合、不做闭环回写、不做曝气器核算，跨厂通用化后置。
   status: confirmed
   answer: 范围=台儿庄一污 4#/5#/6# 与二污 1#/2#/3# 共 6 台离心曝气风机的单机效率实时计算；使用者=现场运行值班与工艺工程师、区域能耗与设备管理、模型维护者；执行频率=每分钟一次（1 分钟内 15 秒采样取均值后计算）；非目标=最优组合与配组推荐（另立 fan-combination-taierzhuang 工作区）、效率闭环控制回写、曝气器数量与充氧效率核算、跨厂通用化。
-  confirmed_by: heshengjie
+  confirmed_by: <owner-id>
   confirmed_at: '2026-10-17T16:50:00+08:00'
   evidence: model-spec.md#1-需求
 - id: requirements-io-contract
@@ -23,7 +23,7 @@ decisions:
   recommendation: 输入 5 项：inlet_flow（m3/min，工况流量）、outlet_pressure（kPa，表压）、motor_power（kW，电机输入）、inlet_temperature（℃，进口温度）、elevation（m，配置常数）。输出 4 项：eta_excel、eta_corrected（无量纲 0~1）、wp_excel、wp_corrected（kW）。平台生效按 Excel 口径，修正口径作伴随字段。
   status: confirmed
   answer: 按推荐：输入为进口风量（m3/min，工况口径，厂家口径待确认）、出口压力（kPa，表压）、电机输入功率（kW）、进口温度（℃）、设计海拔（m，配置常数）；输出为 eta_excel 与 eta_corrected（无量纲 0~1）、wp_excel 与 wp_corrected（kW）。平台部署与对外生效读 eta_excel，修正口径仅用于对账，见 requirements-output-caliber。
-  confirmed_by: heshengjie
+  confirmed_by: <owner-id>
   confirmed_at: '2026-10-17T16:50:00+08:00'
   evidence: model.yaml#contract
 - id: requirements-acceptance
@@ -35,7 +35,7 @@ decisions:
   recommendation: 四条可自动化断言：①公式复现（示例输入 eta_excel=86.20%、wp_excel=62.406 kW、eta_corrected=87.61%、wp_corrected=63.431 kW，容差 0.01 个百分点）；②台账断面复现（一污 4# 73.12%、一污 5# 77.49%、二污 2# 67.97%，容差 0.05 个百分点）；③差值指纹（修正减 Excel：t≈20℃ 为 0、5℃ 高估约 5.4%、30℃ 低估约 3.3%）；④缺任一必需输入时两口径同时置空且带质量标记，不补零。
   status: confirmed
   answer: 接受上述四条为业务验收标准，全部可复现、可写成自动化断言；其中第 3 条差值指纹用于证明两个口径都算对，而不是只对一个。
-  confirmed_by: heshengjie
+  confirmed_by: <owner-id>
   confirmed_at: '2026-10-17T16:50:00+08:00'
   evidence: model-spec.md#可验证的验收标准
 - id: requirements-data-source
@@ -50,8 +50,8 @@ decisions:
   choice: live-iot
   recommendation: live-iot：数据来自公司 IoT 平台实时测点，取数走 scripts/取数探针/iot_bulk_fetch.py 直连 REST。
   status: confirmed
-  answer: live-iot。输入数据来自公司 IoT 平台 be-iot-saas.bewg.net.cn 的实时测点，取数走 scripts/取数探针/iot_bulk_fetch.py 直连 REST 批量拉取；不使用离线静态基准文件（static-baseline）。
-  confirmed_by: heshengjie
+  answer: live-iot。输入数据来自公司 IoT 平台 <internal-host> 的实时测点，取数走 scripts/取数探针/iot_bulk_fetch.py 直连 REST 批量拉取；不使用离线静态基准文件（static-baseline）。
+  confirmed_by: <owner-id>
   confirmed_at: '2026-10-17T16:50:00+08:00'
   evidence: model.yaml#source / input-bindings.yaml
 - id: requirements-output-caliber
@@ -68,7 +68,7 @@ decisions:
   recommendation: 双口径同时输出：eta_excel 逐字复刻模板前导项口径（C18/C6）作为平台生效输出，eta_corrected 前导项改用进口状态（P入口·Q入口）作为伴随对账输出；以后要切口径只改平台映射，不动算法。
   status: confirmed
   answer: 双口径同时输出。模型同时计算 eta_excel（逐字复刻 Excel 模板前导项口径）与 eta_corrected（前导项改用进口状态 P入口·Q入口）；平台部署与对外生效按 Excel 口径，修正口径只作伴随字段用于对账，暂不进入生产读数。
-  confirmed_by: heshengjie
+  confirmed_by: <owner-id>
   confirmed_at: '2026-10-17T16:20:00+08:00'
   evidence: model-spec.md#可验证的验收标准
 - id: design-model-logic
@@ -80,7 +80,7 @@ decisions:
   recommendation: 并列两套多变压缩功率公式，共用压比项 Π=P出口/P入口（K=0.2857）：Excel 口径 W=(1/K)·P标准′·Q标准·(Π^K−1)/1000，P标准′=C18·K≈101,319.4 Pa，逐字复刻模板；修正口径 W=(1/K)·P入口·Q入口·(Π^K−1)。两者关系 W_corrected/W_excel=T入口/T标准。
   status: confirmed
   answer: 按推荐采用双口径并列公式。理由：Excel 口径是公司内已在使用的对账基准，部署它可保证与现场既有填报口径一致；修正口径是物理正确式，前导项用进口真实状态（P入口·Q入口），作为伴随输出与后续切换依据。两者仅差 T入口/T标准 一个因子，20℃ 时完全相等。
-  confirmed_by: heshengjie
+  confirmed_by: <owner-id>
   confirmed_at: '2026-10-17T16:50:00+08:00'
   evidence: model-spec.md#公式或模型逻辑
 - id: design-parameters-measurements
@@ -92,7 +92,7 @@ decisions:
   recommendation: K=0.2857、R=286.88 J/(kg·K)、P标准=101.325 kPa、T标准=293.15 K、C18=354635.537746665、H=38.5 m（唯一可调项）；测点按台账点位编号取 V_IF/V_OP/V_P/V_ITIT，S_RUN 判运行；S_AUT 不可用、V_SIT 不是流量。
   status: confirmed
   answer: 按推荐：K=0.2857、R=286.88 J/(kg·K)、P标准=101.325 kPa、T标准=293.15 K、C18=354635.537746665 均为常量；H=38.5 m 是唯一可调项，按站配置，海拔 0~50 m 对效率影响小于 0.1 个百分点。测点按台账点位编号取 V_IF（工况风量）、V_OP（表压）、V_P（电机输入）、V_ITIT（进口温度），用 S_RUN 判定运行；S_AUT 全期不可靠不得使用，V_SIT 是就地设定值不是流量。单位与量程待厂家书面回复后随版本冻结。
-  confirmed_by: heshengjie
+  confirmed_by: <owner-id>
   confirmed_at: '2026-10-17T16:50:00+08:00'
   evidence: model-spec.md#参数、单位、来源与可调性
 - id: design-exception-strategy
@@ -104,7 +104,7 @@ decisions:
   recommendation: 缺测置空不补零；按物理量程过滤（V_IF 0~250、V_OP 0~120、V_P 0~300、V_ITIT −20~80）；停机不计算；压比异常、样本不足、效率超出合理区间均置空并返回质量标记；不外推不插值。
   status: superseded
   answer: 按推荐采用七条边界策略：缺测置空（不补零不回退默认值）；物理量程过滤剔除脏值；停机（S_RUN=0 或功率≈0）不计算效率；压比异常（Δp≤0 或 Π<1）置空；1 分钟内有效样本少于 2 点置空；效率超出 0.2~1.0 合理区间置空；全程不做外推与插值。每种情况随输出返回质量标记。
-  confirmed_by: heshengjie
+  confirmed_by: <owner-id>
   confirmed_at: '2026-10-17T16:50:00+08:00'
   evidence: model-spec.md#缺失、异常和边界策略
   superseded_by: build-data-quality-treatment
@@ -117,7 +117,7 @@ decisions:
   recommendation: 对抗性审查（docs/数据质量对抗性审查.md）后改为七条流水线：①有效性以行为单位，V_IF/V_OP/V_P/V_ITIT 任一越界整行无效；②边界用物理极限（250 m³/min / 120 kPa / 300 kW / −20~60 ℃）而非统计分位；③连续无效 >6 h 记为 DATA_OUTAGE 并写入运维记录；④停机判定 = S_RUN==1 且 V_P≥5 kW；⑤先过滤再聚合，聚合用时间加权均值；⑥1 分钟内有效样本 <2 点或覆盖 <30 s 置空；⑦每个输出点带 VALID/NO_SAMPLE/ROW_INVALID/STOPPED/DATA_OUTAGE/RATIO_INVALID/OUT_OF_RANGE 质量标记。依据：坏值成块（一污6# 25 天、二污三台同时 13.7 天）、整行污染重合率 99.96%、判据宽严不敏感、S_RUN 在停机段仍报运行的 1,127 点、先聚合后过滤最大偏 115.3 kW。
   status: confirmed
   answer: 接受七条流水线：①有效性以行为单位，V_IF/V_OP/V_P/V_ITIT 任一越界整行无效；②边界用物理极限（V_IF 0~250 m³/min、V_OP 0~120 kPa、V_P 0~300 kW、V_ITIT −20~60 ℃），作为配置项而非硬编码，待厂家额定确认后调整；③连续无效 >6 h 记为 DATA_OUTAGE 并写入运维记录，不静默剔除；④停机判定 = S_RUN==1 且 V_P≥5 kW；⑤先过滤再聚合，聚合用时间加权均值；⑥1 分钟内有效样本 <2 点或有效覆盖 <30 s 置空，不插值不外推；⑦每个输出点带 VALID/NO_SAMPLE/ROW_INVALID/STOPPED/DATA_OUTAGE/RATIO_INVALID/OUT_OF_RANGE 质量标记。同时接受由此产生的后果：二污 2025-04-30~05-14 与一污6# 2026-09-17~10-12 两段坏值块剔除后，历史报告中的运行率与效率分位数需重算。
-  confirmed_by: heshengjie
+  confirmed_by: <owner-id>
   confirmed_at: '2026-10-17T17:00:00+08:00'
   evidence: docs/数据质量对抗性审查.md
 - id: validation-outcome
@@ -129,7 +129,7 @@ decisions:
   recommendation: 接受。四条行为基线全部实测通过（公式复现核对到 0.01 个百分点、台账断面三台到 0.05 个百分点、差值指纹符号与量级一致、缺输入两口径同时置空不补零）；18 个月 4,646,311 条 15 s 记录覆盖温度 -0.2~50.6 ℃，温度分档偏差从 +4.43% 连续过渡到 -5.43%、变号点 21 ℃ 与 T入口/T标准 推导一致；视觉审查确认 12 张信号图与 1 张偏差曲线无异常，三段成块坏值由七态标记整段隔离。验证边界四项口径待现场确认，已在报告 §9 显式列出，不影响本次接受结论。
   status: confirmed
   answer: 接受当前验证指标、结果可视化与行为基线结论。四条验收均为实测通过；偏差随温度的变化与公式推导一致。验证边界四项（V_P 口径、V_OP 取压点与表压/绝压、V_IF 工况/标况、V_ITIT 测点位置）仍未现场确认，按已定双口径方案并列输出、平台生效读 eta_excel，答复回来后按需升版。
-  confirmed_by: heshengjie
+  confirmed_by: <owner-id>
   confirmed_at: '2026-10-17T21:30:00+08:00'
   evidence: validation/validation-report.md
 - id: release-deployment-plan
@@ -140,8 +140,8 @@ decisions:
   question: 模型版本、目标环境、部署步骤和发布包边界是否已经确定？
   recommendation: 推荐：按 0.1.0 / linux-x86_64-py3.11 / mlflow-pyfunc 发布；包体只含 src/model.py 逻辑、运行壳与依赖锁，不含数据与文档；平台按厂站分别绑定 factory_code 与 5 个输入字段，平台生效读 eta_excel；实验名与作者标识在授权时由项目负责人逐字给出；调度每 1 分钟。
   status: confirmed
-  answer: 确定。版本 0.1.0，目标环境 linux/x86_64/Python 3.11/MLflow 2.22.2，包体为 release-bundle/service（只含模型逻辑、运行壳与依赖锁，不含原始数据、台账与对接文档）；平台按一污 PS37217-01、二污 PS37217-02 分别绑定，5 个输入字段逐台配置，elevation 固定 38.5 m；平台生效口径为 eta_excel（领导已定，与 eta_corrected 并列输出、不混算）；调度每 1 分钟；目标实验名与作者标识在发布时逐字提供并逐次授权。已知不确定度（温度探头位置等三项）随部署说明一并交付，本期数值定位为运行参考。
-  confirmed_by: heshengjie
+  answer: 确定。版本 0.1.0，目标环境 linux/x86_64/Python 3.11/MLflow 2.22.2，包体为 release-bundle/service（只含模型逻辑、运行壳与依赖锁，不含原始数据、台账与对接文档）；平台按一污 <plant-code>、二污 <plant-code> 分别绑定，5 个输入字段逐台配置，elevation 固定 38.5 m；平台生效口径为 eta_excel（领导已定，与 eta_corrected 并列输出、不混算）；调度每 1 分钟；目标实验名与作者标识在发布时逐字提供并逐次授权。已知不确定度（温度探头位置等三项）随部署说明一并交付，本期数值定位为运行参考。
+  confirmed_by: <owner-id>
   confirmed_at: '2026-10-18T20:40:00+08:00'
   evidence: model-spec.md#部署计划
 - id: release-rollback-plan
@@ -153,6 +153,6 @@ decisions:
   recommendation: 推荐：首次发布无上一版本可切，回滚 = 平台停用任务并恢复人工 Excel 核算；后续版本回滚 = 平台绑定切回上一版本 Run，不靠改本地文件；已发布快照永久保留不改写。
   status: confirmed
   answer: 确定。触发条件：连续 3 周期取数失败或空输出、单机有效样本占比连续 1 小时低于 50%、DATA_OUTAGE 或 OUT_OF_RANGE 占比超 30%、eta_excel 连续 1 小时越出 [0.2,1.0]、与现场 Excel 人工复算持续相差超 3 个百分点。首次发布回滚 = 平台停用任务并恢复人工 Excel 模板核算；后续补丁版回滚 = 平台绑定切回上一生效版本 Run，平台保留各版本 Run 与制品。已发布快照 releases/0.1.0.yaml 永久保留、不覆盖不删改；回滚由项目负责人 30 分钟内完成并留档。
-  confirmed_by: heshengjie
+  confirmed_by: <owner-id>
   confirmed_at: '2026-10-18T20:45:00+08:00'
   evidence: model-spec.md#回滚计划

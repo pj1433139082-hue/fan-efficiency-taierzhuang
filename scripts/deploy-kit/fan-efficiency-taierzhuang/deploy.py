@@ -33,8 +33,8 @@ if sys.platform == "win32":
 # 内网服务不吃系统代理
 for _proxy in ["HTTP_PROXY", "HTTPS_PROXY", "http_proxy", "https_proxy", "ALL_PROXY", "all_proxy"]:
     os.environ.pop(_proxy, None)
-os.environ["NO_PROXY"] = "bewg.net.cn,localhost,127.0.0.1,*"
-os.environ["no_proxy"] = "bewg.net.cn,localhost,127.0.0.1,*"
+os.environ["NO_PROXY"] = "<internal-host>,localhost,127.0.0.1,*"
+os.environ["no_proxy"] = "<internal-host>,localhost,127.0.0.1,*"
 
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 INFRA_DIR = os.path.join(SCRIPT_DIR, "infra")
@@ -67,7 +67,7 @@ MODEL_CARD: Dict[str, str] = {
     "model_version": "0.1.0",
     "caliber": "excel",
     "experiment_name": "MLModel-2563_V001",
-    "author": "heshengjie",
+    "author": "<owner-id>",
 }
 
 # 验证样本：五个输入列各取一条真实分钟读数（见 data/fan-efficiency-taierzhuang/delivery/deploy-sample.csv）

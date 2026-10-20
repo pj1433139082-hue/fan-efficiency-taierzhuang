@@ -15,7 +15,7 @@
     "id": "fan-efficiency-taierzhuang",
     "lifecycle_state": "releasable",
     "name": "风机效率实时计算（台儿庄）",
-    "owner": "heshengjie",
+    "owner": "<owner-id>",
     "target": "cpu-iot",
     "version": "0.1.0"
   },

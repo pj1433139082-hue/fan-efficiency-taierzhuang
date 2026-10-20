@@ -1,0 +1,16 @@
+{
+  "profile": "public",
+  "skip_dirs": [
+    "plots",
+    "work"
+  ],
+  "skip_names": [
+    "取数核对记录-自控信号台账.md",
+    "对接答复记录.md"
+  ],
+  "rewrites": [
+    "internal-host",
+    "plant-code",
+    "owner-id"
+  ]
+}

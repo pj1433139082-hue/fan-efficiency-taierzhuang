@@ -19,7 +19,7 @@
 
 - **台儿庄污水处理厂运行值班 / 工艺工程师**：看每台风机当前效率，判断机组是否在高效区运行。
 - **区域能耗与设备管理**：按双口径对账，量化模板口径随季节的系统偏差。
-- **模型维护者（heshengjie）**：口径切换、参数调整与版本发布。
+- **模型维护者（<owner-id>）**：口径切换、参数调整与版本发布。
 
 ### 执行频率
 
@@ -28,7 +28,7 @@
 
 ### 范围与非目标
 
-**范围**：台儿庄一污（`PS37217-01`）4#/5#/6# 与二污（`PS37217-02`）1#/2#/3# 共 6 台离心曝气风机的
+**范围**：台儿庄一污（`<plant-code>`）4#/5#/6# 与二污（`<plant-code>`）1#/2#/3# 共 6 台离心曝气风机的
 单机效率实时计算。
 
 > **与北控一期是同一个算法**（ADR 0045）：公式、常量、`src/model.py` 与输入输出契约两厂共享、只有一份；
@@ -110,7 +110,7 @@ W = (1/K) · P入口 · Q入口 · (Π^K − 1)
 
 | 契约字段 | 现场信号 | 台账点位编号（一污 / 二污） | 单位 | 口径 |
 |---|---|---|---|---|
-| `inlet_flow` | `V_IF` 进口风量 | `PS37217-01-BE_GFJF_0001-C_003_000x` / `PS37217-02-…_000x` | m³/min | **工况流量**（非标况）——厂家 2026-10-18 确认；但由**风机面板换算**得出，不是流量计直测 |
+| `inlet_flow` | `V_IF` 进口风量 | `<plant-code>-BE_GFJF_0001-C_003_000x` / `<plant-code>-…_000x` | m³/min | **工况流量**（非标况）——厂家 2026-10-18 确认；但由**风机面板换算**得出，不是流量计直测 |
 | `outlet_pressure` | `V_OP` 出口压力 | 同上（同一设备同一点位编号，按信号名区分） | kPa | **表压**——厂家确认；取压点在**风机内部、蜗壳出口**（最靠近叶轮，已含风机本体静压升） |
 | `motor_power` | `V_P` 功率 | 同上 | kW | **电机输入功率，含全部损耗**（电机＋变频器＋传动）——厂家确认；故 η 为**机组效率**，非风机本体效率 |
 | `inlet_temperature` | `V_ITIT` 进口温度 | 同上 | ℃ | 用于标况折算与证据链 |
@@ -200,7 +200,7 @@ W = (1/K) · P入口 · Q入口 · (Π^K − 1)
 
 - 版本与包形态：`0.1.0`，`cpu-iot` + `mlflow-pyfunc`。发布包体是 `release-bundle/service/`（`MLmodel`、`conda.yaml`、`python_env.yaml`、`code/`、`artifacts/`），只含 `src/model.py` 编译后的逻辑、运行壳与 `runtime/requirements.lock.txt` 锁定的四个依赖；不含原始数据、台账、对接文档与试跑包。依赖锁：`mlflow==2.22.2`、`cloudpickle==3.1.2`、`numpy==2.3.3`、`pandas==2.3.3`。
 - 目标环境：linux / x86_64 / Python 3.11（`>=3.11,<3.12`）、MLflow 2.22.2。本机是 Windows，`build_platform_mismatch` 为 ADVISORY：正式包在目标平台构建并用 `bundle-preflight` 复验，本机的构建只用于结构自检。
-- 平台绑定：`factory_code` 二选一（一污 `PS37217-01`、二污 `PS37217-02`），按台绑定 5 个输入字段——`inlet_flow`（V_IF，m³/min）、`outlet_pressure`（V_OP，kPa）、`motor_power`（V_P，kW）、`inlet_temperature`（V_ITIT，℃）、`elevation`（固定 38.5 m，随绑定给定，不由平台取数）。目标实验名在发布授权时由项目负责人逐字提供（平台绑定页上的名称，含 `_V001` 这类后缀），本地不预先假定、也不从别处推断。
+- 平台绑定：`factory_code` 二选一（一污 `<plant-code>`、二污 `<plant-code>`），按台绑定 5 个输入字段——`inlet_flow`（V_IF，m³/min）、`outlet_pressure`（V_OP，kPa）、`motor_power`（V_P，kW）、`inlet_temperature`（V_ITIT，℃）、`elevation`（固定 38.5 m，随绑定给定，不由平台取数）。目标实验名在发布授权时由项目负责人逐字提供（平台绑定页上的名称，含 `_V001` 这类后缀），本地不预先假定、也不从别处推断。
 - 发布步骤（每一步都要显式执行，不做静默跳步）：`bundle-build --apply` 生成包 → `bundle-preflight` 校验包内契约 → 上传 service 到目标实验的新 Run → 在平台配置工厂码、5 个输入字段与调度 → 用 8 行样本做冒烟（输出列名与契约一致、`quality` 为七态之一）→ 回载核验 Run 制品摘要 → `archive-release` 生成 `releases/0.1.0.yaml` 快照。远端写入与真实发布逐次授权，不存长期许可。
 - 口径：平台本期生效读 `eta_excel`（Excel 口径，领导已定）；`eta_corrected`、`wp_excel`、`wp_corrected` 同时输出供对照，调度只绑 Excel 口径，两个口径不得混算。
 - 调度：每 1 分钟一次，输入按分钟做时间加权聚合后再进模型，不改现场 15 s 采集频率。

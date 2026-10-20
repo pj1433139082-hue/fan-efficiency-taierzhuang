@@ -20,7 +20,7 @@
 
 ```powershell
 # 1) 开 VPN，确认内网可达（HTTPS 反复超时先查 MTU=1400）
-Test-NetConnection ailab-mlflow.bewg.net.cn -Port 443
+Test-NetConnection <internal-host> -Port 443
 
 # 2) 必须在本目录内执行（技能包把 cwd 下所有 .py 打进 custom_sources）
 cd E:\beikong-code\learn-model\scripts\deploy-kit\fan-efficiency-taierzhuang
