@@ -1,12 +1,21 @@
 # 风机效率实时计算（台儿庄）
 
-台儿庄区污水处理厂 6 台曝气风机的**实时效率（风机效率 η）**计算模型。现场给五个读数（进风流量、出口压力、电机功率、进气温度、海拔）就直接算出风机效率与风压功率——不训练、不依赖历史数据，加载端零第三方依赖。
+污水处理厂曝气风机的**实时效率（风机效率 η）**计算模型。现场给五个读数（进风流量、出口压力、电机功率、进气温度、海拔）就直接算出风机效率与风压功率——不训练、不依赖历史数据，加载端零第三方依赖。
 
 - 模型 ID：`fan-efficiency-taierzhuang`
 - 版本：`0.1.0`
-- 作者：`heshengjie`
 - 打包格式：MLflow pyfunc（`cpu-iot` 目标、Python 3.11、mlflow 2.22.2）
 - 生命周期：`releasable`。框架的 `model-lab publish` 只支持点码模型，本模型走集团技能包 A 通道（`scripts/deploy-kit/fan-efficiency-taierzhuang/deploy.py`）上传。
+
+## 本仓库是脱敏公开版
+
+这份快照用于代码与方法展示，**不是**完整的项目档案。相对内部仓库，这里做了三件事：
+
+1. 删除客户现场材料与实测数据（`data/` 全部、`work/` 分析产物、`plots/` 实测信号图，以及两份含现场对接内容的记录文档）；
+2. 内网主机名与厂站编码统一替换为占位符（`<internal-host>` / `<plant-code>`），平台 Run 直链不对外给出；
+3. 负责人账号替换为 `<owner-id>`。
+
+因此文中的平台链接、点位编码不是可直接使用的真实值；要复现现场数据请联系模型负责人。
 
 ## 平台身份（2026-10-20 换绑后）
 
@@ -16,7 +25,7 @@
 | Run ID | `26df4cd32bc6489196a33dba3d975878` |
 | Run 名 | `invincible-wasp-339` |
 | 模型 URI | `runs:/26df4cd32bc6489196a33dba3d975878/service` |
-| 平台页 | https://ailab-mlflow.bewg.net.cn/#/experiments/176/runs/26df4cd32bc6489196a33dba3d975878 |
+| 平台页 | 内网 MLflow 平台（地址不对外公开） |
 | Run 状态 | `FINISHED`；平台部署配置已换绑到该 Run，试运行成功（2026-10-20） |
 
 上一版 Run `5fd59ee0b6c94f64b9935a50614ff46e`（`lyrical-skink-360`）已打 `model_lab_superseded_by` / `model_lab_superseded_reason` 标签，只作对照：它的输入签名是 `double`，平台上参数值写整数（`64`）会被推断成 `int64`，在 `predict` 前被 schema 校验拒掉；在用 Run 的五个输入签名是 `any`，整数与小数都能过。
@@ -70,7 +79,7 @@ print(m.predict(df))
 
 ### 2. 平台调用
 
-参数值示例见 [docs/平台参数示例.json](models/_drafts/fan-efficiency-taierzhuang/docs/平台参数示例.json)（它是二污 2 期 2# 的真实读数，仅作格式示例）。整数与小数现在都能填。批量样本见 [deploy-sample.csv](data/fan-efficiency-taierzhuang/delivery/deploy-sample.csv)（24 行）。
+参数值示例见 [docs/平台参数示例.json](models/_drafts/fan-efficiency-taierzhuang/docs/平台参数示例.json)（一条真实量级读数，仅作格式示例）。整数与小数现在都能填。批量样本文件属现场数据，脱敏版未包含。
 
 ### 3. 重新上传到集团 MLflow
 
@@ -89,7 +98,7 @@ models/_drafts/fan-efficiency-taierzhuang/   模型工作区（契约、决策�
 ├── model-spec.md           模型规格（口径、公式、边界）
 ├── decisions.yaml          设计决策与理由
 ├── inputs.md / questions.md / CHECKLIST.md
-├── docs/                   历史数据分析、效率曲线、数据质量审查、厂家核对清单、发布记录
+├── docs/                   历史数据分析、效率曲线、数据质量审查、发布记录
 ├── src/model.py            纯函数实现（本地零依赖）
 ├── notebooks/model.ipynb   建模 Notebook
 ├── release-bundle/service/ MLflow pyfunc 包（值内联，可直接 load）
@@ -97,8 +106,6 @@ models/_drafts/fan-efficiency-taierzhuang/   模型工作区（契约、决策�
 ├── tests/                  model.py 的行为测试
 ├── validation/             验证报告
 ├── releases/               版本快照说明
-├── plots/                  逐参数信号图与效率曲线（PNG）
-├── work/                   取数、审计、选型分析脚本与报告
 ├── explainer/              给业务方的单页解释器（HTML）
 ├── learning/               经验教训与任务书
 └── baselines/              行为基线说明
@@ -106,29 +113,33 @@ scripts/deploy-kit/fan-efficiency-taierzhuang/   发布套件（A 通道）
 ├── deploy.py               三步上传：构建包 → 内网 MLflow → 写标签
 ├── iot_efficiency_mlflow.py
 └── README.md               套件用法与四个必知
-data/fan-efficiency-taierzhuang/delivery/        小体积交付件
-├── deploy-sample.csv       批量样本 24 行
-├── 对外发送-台儿庄点位与问题清单.md
-├── curves-p2/              6 台机的 P2 工况曲线
-└── fan-efficiency-demo/    离线演示（单条/批量/预测 + 自测）
 ```
 
 ## 本仓库不含什么
 
-| 内容 | 原因 | 去哪取 |
-|---|---|---|
-| `scripts/deploy-kit/**/infra/` | 集团 MLflow 凭据（混淆内嵌）与 pyarmor 运行时二进制，任何 Git 都不入库 | 内网/框架仓库 `learn-model` 本机副本 |
-| `data/fan-efficiency-taierzhuang/raw\|derived/*.parquet` | 28 个月度分片 + 逐分钟明细，约 225 MB | 框架仓库本地盘（已 `.gitignore`） |
-| `对接清单-内外部.xlsx/.docx`、`fan-efficiency-*kit*.zip` | 二进制交付附件，可再生成 | 框架仓库 `data/.../delivery/` |
+| 内容 | 原因 |
+|---|---|
+| `scripts/deploy-kit/**/infra/` | 集团 MLflow 凭据（混淆内嵌）与 pyarmor 运行时二进制，任何 Git 都不入库 |
+| `data/` 全部 | 客户现场材料、实测曲线与交付样本（原始 28 个月度分片 + 逐分钟明细约 225 MB；脱敏版整个目录不导出） |
+| `work/` | 取数、审计、选型的分析中间产物 |
+| `plots/` | 逐参数实测信号图 |
+| 内网主机名、厂站编码、负责人账号 | 以 `<internal-host>` / `<plant-code>` / `<owner-id>` 占位 |
 
 ## 来源与同步
 
-- **权威源**：私有仓库 `learn-model`（`pj1433139082-hue/learn-model`）里的 `models/_drafts/fan-efficiency-taierzhuang/` 与 `scripts/deploy-kit/fan-efficiency-taierzhuang/`，导出时对应提交 `a9d45d8`。
+- **权威源**：私有仓库 `learn-model`（`pj1433139082-hue/learn-model`，不公开）里的 `models/_drafts/fan-efficiency-taierzhuang/` 与 `scripts/deploy-kit/fan-efficiency-taierzhuang/`。
 - 本仓库是**导出快照**，目录结构刻意与框架保持一致（含 `models/_drafts/` 前缀），方便直接比对与回灌；要改模型请回 `learn-model` 改，再重新导出，避免两边漂移。
-- 平台绑定与运维细节见快照内 [docs/发布记录-0.1.0.md](models/_drafts/fan-efficiency-taierzhuang/docs/发布记录-0.1.0.md)；框架侧部署配置页在 `learn-model` 的 `docs/20-规则层/46-风机效率实时计算模型-MLModel-2563_V001部署配置.md`。
+- 本仓库带 `.export-profile.json`（`profile: public`）。重同步必须带 `--public`，否则脚本会拒绝执行——防止客户材料被重新推上来：
+
+```powershell
+.\.venv-311\Scripts\python.exe scripts\export-model-repo.py fan-efficiency-taierzhuang `
+    --public --target <本仓库目录> --push
+```
+
+- 平台绑定与运维细节见快照内 [docs/发布记录-0.1.0.md](models/_drafts/fan-efficiency-taierzhuang/docs/发布记录-0.1.0.md)。
 
 ## 已知边界与待确认
 
 - 厂家侧 5 条待确认：C-4 温度探头位置、E-3 喘振最小风量、A-2 样本风量范围、A-3 面板换算参数、D-5 功率来源；回齐后发 `0.1.1`。
 - 平台本期只做批量/托管调用，不做实时流式。
-- 6 台机历史口径（Q 中位 50.0 m³/min、Δp 中位 44.6 kPa、η 中位 71.50%）见 [docs/历史数据分析报告.md](models/_drafts/fan-efficiency-taierzhuang/docs/历史数据分析报告.md)。
+- 6 台机历史口径统计见 [docs/历史数据分析报告.md](models/_drafts/fan-efficiency-taierzhuang/docs/历史数据分析报告.md)。
